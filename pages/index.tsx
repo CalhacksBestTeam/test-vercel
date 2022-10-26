@@ -7,7 +7,7 @@ import io from "socket.io-client";
 export default function Home() {
 
   useEffect(() => {
-    fetch('/api/socketio').finally(() => {
+    fetch('/api/websocket').finally(() => {
       const socket = io()
 
       socket.on('connect', () => {
