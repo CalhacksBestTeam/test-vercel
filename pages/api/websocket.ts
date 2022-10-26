@@ -1,25 +1,29 @@
-import {Server} from "socket.io";
+import { Server } from 'socket.io'
 
-const SocketHandler = (req : any, res : any) => {
-    console.log("YO")
+const ioHandler = (req : any, res : any) => {
+    if (!res.socket.server.io) {
+        console.log('*First use, starting socket.io')
 
-    if (res.socket.server.io) {
-        console.log('Socket is already running')
-    } else {
-        console.log('Socket is initializing')
         const io = new Server(res.socket.server)
 
-        io.sockets.on('connection', (socket : any) => {
-            socket.on('message', (data : any) => {
-                console.log(data)
-                socket.emit("message", data)
+        io.on('connection', socket => {
+            socket.broadcast.emit('a user connected')
+            socket.on('hello', msg => {
+                socket.emit('hello', 'world!')
             })
         })
+
         res.socket.server.io = io
+    } else {
+        console.log('socket.io already running')
     }
     res.end()
-
-
 }
 
-export default SocketHandler
+export const config = {
+    api: {
+        bodyParser: false
+    }
+}
+
+export default ioHandler

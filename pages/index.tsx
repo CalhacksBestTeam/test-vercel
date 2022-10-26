@@ -1,8 +1,35 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
+import {useEffect} from "react";
+import io from "socket.io-client";
 
 export default function Home() {
+
+  useEffect(() => {
+    fetch('/api/socketio').finally(() => {
+      const socket = io()
+
+      socket.on('connect', () => {
+        console.log('connect')
+        socket.emit('hello')
+      })
+
+      socket.on('hello', data => {
+        console.log('hello', data)
+      })
+
+      socket.on('a user connected', () => {
+        console.log('a user connected')
+      })
+
+      socket.on('disconnect', () => {
+        console.log('disconnect')
+      })
+    })
+  }, [])
+
+
   return (
     <div className={styles.container}>
       <Head>
